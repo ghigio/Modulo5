@@ -3,10 +3,31 @@ package com.ghisoft.mod5;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
+
+import javax.swing.JFrame;
 
 public class Main {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
+
+		JFrame window = new JFrame();
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setResizable(false);
+		window.setTitle("Supercomputer");
+
+		GamePanel gamePanel = new GamePanel();
+		window.add(gamePanel);
+
+		window.pack();
+
+		window.setLocationRelativeTo(null);
+		window.setVisible(true);
+
+		gamePanel.startGameThread();
+	}
+
+	public static void oldmain(String[] args) throws IOException {
 		Game g = new Game();
 
 		while (!g.checkVictory()) {
@@ -30,25 +51,21 @@ public class Main {
 			}
 
 			System.out.println();
-			System.out.println("Move: 1 - Right Right");
-			System.out.println("Move: 2 - Right Left");
-			System.out.println("Move: 3 - Left Right");
-			System.out.println("Move: 4 - Left Left");
-			System.out.println("Move: 5 - Split");
+			printAvailableMoves(g.getAvailableMoves());
 
 			InputStreamReader in = new InputStreamReader(System.in);
 			BufferedReader buff = new BufferedReader(in);
 
 			String command = buff.readLine();
-			if (command.equals("1")) {
+			if (command.equals("3")) {
 				g.move(Game.MOVE_RR);
 			} else if (command.equals("2")) {
 				g.move(Game.MOVE_RL);
-			} else if (command.equals("3")) {
+			} else if (command.equals("1")) {
 				g.move(Game.MOVE_LR);
-			} else if (command.equals("4")) {
+			} else if (command.equals("0")) {
 				g.move(Game.MOVE_LL);
-			} else if (command.equals("5")) {
+			} else if (command.equals("4")) {
 				g.move(Game.MOVE_SPLIT);
 			}
 		}
@@ -58,6 +75,29 @@ public class Main {
 			System.out.println("BLUE won");
 		}
 
+	}
+
+	public static void printAvailableMoves(List<Integer> moves) {
+		for (int m : moves) {
+			switch (m) {
+			case Game.MOVE_RR:
+				System.out.println("Move: " + Game.MOVE_RR + " - Right Right");
+				break;
+			case Game.MOVE_RL:
+				System.out.println("Move: " + Game.MOVE_RL + " - Right Left");
+				break;
+			case Game.MOVE_LR:
+				System.out.println("Move: " + Game.MOVE_LR + " - Left Right");
+				break;
+			case Game.MOVE_LL:
+				System.out.println("Move: " + Game.MOVE_LL + " - Left Left");
+				break;
+			case Game.MOVE_SPLIT:
+				System.out.println("Move: " + Game.MOVE_SPLIT + " - Split");
+				break;
+			}
+
+		}
 	}
 
 }
