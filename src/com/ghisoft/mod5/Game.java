@@ -1,10 +1,11 @@
 package com.ghisoft.mod5;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Game {
-	private int redLeft;
-	private int redRight;
-	private int blueLeft;
-	private int blueRight;
+	private Player red;
+	private Player blue;
 
 	private int activePlayer;
 
@@ -19,84 +20,106 @@ public class Game {
 	final static int MOVE_SPLIT = 4;
 
 	public Game() {
-		redLeft = 1;
-		redRight = 1;
-		blueLeft = 1;
-		blueRight = 1;
+		red = new Player();
+		blue = new Player();
 
 		activePlayer = PLAYER_BLUE;
 	}
 
 	public void move(int move) {
+		Player active, opponent;
 		if (activePlayer == PLAYER_BLUE) {
-			if (move == MOVE_LL) {
-				redLeft = (redLeft + blueLeft) % 5;
-			} else if (move == MOVE_LR) {
-				redRight = (redRight + blueLeft) % 5;
-			} else if (move == MOVE_RL) {
-				redLeft = (redLeft + blueRight) % 5;
-			} else if (move == MOVE_RR) {
-				redRight = (redRight + blueRight) % 5;
-			} else if (move == MOVE_SPLIT) {
-				if (blueRight == 0) {
-					blueLeft = blueLeft / 2;
-					blueRight = blueLeft;
-				} else {
-					blueRight = blueRight / 2;
-					blueLeft = blueRight;
-				}
-			}
-
+			active = blue;
+			opponent = red;
 			activePlayer = PLAYER_RED;
-		} else if (activePlayer == PLAYER_RED) {
-			if (move == MOVE_LL) {
-				blueLeft = (blueLeft + redLeft) % 5;
-			} else if (move == MOVE_LR) {
-				blueRight = (blueRight + redLeft) % 5;
-			} else if (move == MOVE_RL) {
-				blueLeft = (blueLeft + redRight) % 5;
-			} else if (move == MOVE_RR) {
-				blueRight = (blueRight + redRight) % 5;
-			} else if (move == MOVE_SPLIT) {
-				if (redRight == 0) {
-					redLeft = redLeft / 2;
-					redRight = redLeft;
-				} else {
-					redRight = redRight / 2;
-					redLeft = redRight;
-				}
-			}
-
+		} else {
+			active = red;
+			opponent = blue;
 			activePlayer = PLAYER_BLUE;
-
 		}
+
+		if (move == MOVE_LL) {
+			opponent.left = (opponent.left + active.left) % 5;
+		} else if (move == MOVE_LR) {
+			opponent.right = (opponent.right + active.left) % 5;
+		} else if (move == MOVE_RL) {
+			opponent.left = (opponent.left + active.right) % 5;
+		} else if (move == MOVE_RR) {
+			opponent.right = (opponent.right + active.right) % 5;
+		} else if (move == MOVE_SPLIT) {
+			if (active.right == 0) {
+				active.left = active.left / 2;
+				active.right = active.left;
+			} else {
+				active.right = active.right / 2;
+				active.left = active.right;
+			}
+		}
+
 	}
 
 	public boolean checkVictory() {
-		if (blueLeft == 0 && blueRight == 0) {
+		if (blue.left == 0 && blue.right == 0) {
 			return true;
 		}
-		if (redLeft == 0 && redRight == 0) {
+		if (red.left == 0 && red.right == 0) {
 			return true;
 		}
 
 		return false;
 	}
 
+	public List<Integer> getAvailableMoves() {
+		Player active, opponent;
+		if (activePlayer == PLAYER_BLUE) {
+			active = blue;
+			opponent = red;
+		} else {
+			active = red;
+			opponent = blue;
+		}
+
+		List<Integer> moves = new ArrayList<Integer>();
+
+		if (active.left != 0) {
+			if (opponent.left != 0) {
+				moves.add(MOVE_LL);
+			}
+			if (opponent.right != 0) {
+				moves.add(MOVE_LR);
+			}
+
+		}
+		if (active.right != 0) {
+			if (opponent.left != 0) {
+				moves.add(MOVE_RL);
+			}
+			if (opponent.right != 0) {
+				moves.add(MOVE_RR);
+			}
+
+		}
+		if ((active.left == 0 && active.right % 2 == 0) || (active.left % 2 == 0 && active.right == 0)) {
+			moves.add(MOVE_SPLIT);
+		}
+
+		return moves;
+	}
+
 	public int getRedLeft() {
-		return redLeft;
+		return red.left;
 	}
 
 	public int getRedRight() {
-		return redRight;
+		return red.right;
 	}
 
 	public int getBlueLeft() {
-		return blueLeft;
+		return blue.left;
 	}
 
 	public int getBlueRight() {
-		return blueRight;
+		return blue.right;
 	}
 
 	public int getActivePlayer() {
